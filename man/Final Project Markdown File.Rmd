@@ -1,0 +1,133 @@
+```yaml
+
+---
+title: "R Markdown Final Project"
+author: "Rajdai Bhikam"
+date: "2025-04-30"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##This assignment outlines the core functions I created for my final project using the `mtcars` dataset. These functions are part of my R package `RBhikam`, designed to help new R users clean, summarize, and visualize data easily.
+
+---
+**FUNCTION 1**
+
+**Purpose:**
+This function is used to remove missing values and convert column names to lowercase. 
+
+**Input:**
+`df`(data frame): The dataset to clean
+
+**Output:**
+A clean dataframe with no `NA` values and standardize column names.
+
+**Code:**
+
+```{r}
+
+clean_data <- function(df) {
+  df <- na.omit(df)                 
+  names(df) <- tolower(names(df)) 
+  return(df)                       
+}
+``` 
+**Example:**
+```{r}
+cleaned <- clean_data(mtcars)
+
+head(cleaned)
+
+```
+**FUNCTION 2**
+**Purpose:**
+This function groups data by categorical variables and then calculates the mean of a selected column
+**Input:**
+`df`: The dataframe
+`group_col`: column by group
+`summary_col`: summary of numeric column
+
+**Output:**
+A summary of the datframe
+
+**CODE:**
+
+```{r}
+summarize_by_group <- function(df, group_col, summary_col) {
+  df |>
+    dplyr::group_by(.data[[group_col]]) |>
+    dplyr::summarise(mean_value = mean(.data[[summary_col]], na.rm = TRUE))
+}
+```
+**Example:**
+```{r}
+summarize_by_group(mtcars, "cyl", "mpg")
+```
+
+**FUNCTION 3**
+
+**Purpose:**
+This function creates a bar plot of the grouped data.
+
+**Input:**
+`df`: The dataframe with grouped summaries
+`x`: column name for x-axis
+`y`: column name for y-axis
+
+**Output:**
+A ggplot2 chart
+
+**CODE:**
+
+```{r}
+library(ggplot2)
+
+plot_summary <- function(df, x, y) {
+  ggplot(data = df, aes(x = .data[[x]], y = .data[[y]])) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    theme_minimal()
+}
+```
+**Example:**
+
+```{r}
+summary_df <- summarize_by_group(mtcars, "cyl", "mpg")
+plot_summary(summary_df, "cyl", "mean_value")
+
+
+```
+
+**Package Structure**
+
+The RBhikam package contains the following components
+
+- `DESCRIPTION` with metadata and dependencies
+- `R/` folder with individual `.R` function files
+- `data/mtcars.rda` for the sample dataset
+- `README.md` for GitHub overview
+- `man/` folder with auto-generated documentation
+- `tests/` folder (optional, to test functions)
+
+---
+
+**Installation Instructions**
+
+The package was installed and tested using:
+
+```r
+devtools::document()  
+devtools::install()    
+library(RBhikam)       
+```
+
+---
+
+
+**Reflections & Challenges**
+
+- **What worked:** Function creation and documentation using `roxygen2` was straightforward after the first attempt.
+- **What I learned:** I learned how R packages are structured, documented, tested, and published on GitHub.
+- **Challenges:** My biggest challenge was fixing documentation errors and making sure functions exported properly. I had a hard time getting everything to work because of the multiple errors. 
+- **AI Disclosure:** I used ChatGPT to help debug errors, and clarify package structure.All code was written, tested, and verified manually by me, and I used AI tools as a guide, not as a substitute for learning. The final implementation reflects my own understanding and work.
